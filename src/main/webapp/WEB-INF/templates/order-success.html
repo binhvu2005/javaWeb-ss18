@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thanh toán thành công</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.5/css/bootstrap.min.css}">
+</head>
+<body>
+<div class="container mt-5 text-center">
+    <div class="alert alert-success fs-4" th:text="${message}">Đặt hàng thành công! Cảm ơn bạn đã mua sắm.</div>
+    <a th:href="@{/home}" class="btn btn-primary mt-3">Về trang chủ</a>
+</div>
+</body>
+</html>

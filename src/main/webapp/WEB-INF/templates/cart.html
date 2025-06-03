@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Giỏ hàng của bạn</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.5/css/bootstrap.min.css}">
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="mb-4">Giỏ hàng của bạn</h2>
+    <div th:if="${#lists.isEmpty(cartItems)}">
+        <div class="alert alert-info">Giỏ hàng của bạn đang trống.</div>
+        <a th:href="@{/home}" class="btn btn-primary">Tiếp tục mua sắm</a>
+    </div>
+    <div th:if="${not #lists.isEmpty(cartItems)}">
+        <form th:action="@{/cart/update}" method="post">
+            <table class="table table-bordered align-middle">
+                <thead>
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Đơn giá</th>
+                    <th>Số lượng</th>
+                    <th>Thành tiền</th>
+                    <th>Xóa</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${cartItems}">
+                    <td>
+                        <img th:src="${item.product.image}" width="70" th:alt="${item.product.productName}">
+                    </td>
+                    <td th:text="${item.product.productName}"></td>
+                    <td th:text="${#numbers.formatDecimal(item.product.price,1,'COMMA',2,'POINT')} + ' VNĐ'"></td>
+                    <td>
+                        <input type="number" min="1"
+                               th:name="'quantities[' + ${item.cart.id} + ']'"
+                               th:value="${item.cart.quantity}"
+                               class="form-control" style="width:80px;">
+                    </td>
+                    <td th:text="${#numbers.formatDecimal(item.product.price * item.cart.quantity,1,'COMMA',2,'POINT')} + ' VNĐ'"></td>
+                    <td>
+                        <a th:href="@{|/cart/delete/${item.cart.id}|}" class="btn btn-danger btn-sm"
+                           onclick="return confirm('Bạn chắc chắn muốn xóa sản phẩm này?')">Xóa</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="fw-bold fs-5">
+                    Tổng tiền: <span th:text="${#numbers.formatDecimal(total,1,'COMMA',2,'POINT')} + ' VNĐ'"></span>
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-success">Cập nhật giỏ hàng</button>
+                    <a th:href="@{/order/checkout}" class="btn btn-primary ms-2">Thanh toán</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

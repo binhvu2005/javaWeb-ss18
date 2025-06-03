@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thông tin cá nhân & Lịch sử đơn hàng</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.5/css/bootstrap.min.css}">
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="mb-4">Thông tin cá nhân</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <form th:action="@{/profile/update}" th:object="${customer}" method="post">
+                <div class="mb-3">
+                    <label class="form-label">Tên đăng nhập</label>
+                    <input type="text" th:field="*{username}" class="form-control" readonly>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" th:field="*{email}" class="form-control" readonly>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Số điện thoại</label>
+                    <input type="text" th:field="*{phoneNumber}" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-success">Cập nhật số điện thoại</button>
+                <div th:if="${success}" class="alert alert-success mt-2" th:text="${success}"></div>
+            </form>
+        </div>
+    </div>
+
+    <hr class="my-5">
+
+    <h3 class="mb-3">Lịch sử đơn hàng</h3>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Mã đơn</th>
+            <th>Ngày đặt</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order : ${orders}">
+            <td th:text="${order.id}"></td>
+            <td th:text="${#dates.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+            <td th:text="${#numbers.formatDecimal(order.totalMoney,1,'COMMA',2,'POINT')} + ' VNĐ'"></td>
+            <td th:text="${order.status}"></td>
+            <td>
+                <form th:action="@{|/order/cancel/${order.id}|}" method="post" th:if="${order.status == 'PENDING'}">
+                    <button type="submit" class="btn btn-danger btn-sm"
+                            onclick="return confirm('Bạn chắc chắn muốn hủy đơn này?')">Hủy</button>
+                </form>
+                <span th:if="${order.status != 'PENDING'}" class="text-muted">Không thể hủy</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Phân trang -->
+    <nav th:if="${totalPages > 1}">
+        <ul class="pagination">
+            <li th:each="i : ${#numbers.sequence(1, totalPages)}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a th:href="@{|/profile?page=${i}|}" th:text="${i}" class="page-link"></a>
+            </li>
+        </ul>
+    </nav>
+</div>
+</body>
+</html>
